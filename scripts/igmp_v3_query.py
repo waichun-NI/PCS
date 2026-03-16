@@ -45,12 +45,12 @@ def main():
     parser.add_option("-S", "--igmp_sources",
                       dest="igmp_sources", default=None,
                       help="Comma-delimited list of IPv4 sources for "
-			   "a group-and-source specific query.")
+                           "a group-and-source specific query.")
 
     parser.add_option("-M", "--igmp_maxresp",
                       dest="igmp_maxresp", default=None,
                       help="The maximum time for end-stations to "
-		           "respond (in seconds).")
+                           "respond (in seconds).")
 
     parser.add_option("-c", "--count",
                       dest="count", default=None,
@@ -74,8 +74,8 @@ def main():
        options.ether_source is None or \
        options.ip_source is None or \
        options.count is None:
-	print "Non-optional argument missing."
-	return
+        print("Non-optional argument missing.")
+        return
 
     #if options.ip_dest is not None and options.ether_dest is None:
     #	print "Non-optional argument missing."
@@ -90,13 +90,13 @@ def main():
     #
     sources = []
     if options.igmp_sources is not None:
-	if options.igmp_group is None:
-	    raise "A group must be specified for a GSR query."
-	else:
-	    for source in options.igmp_sources.split(','):
-		sources.append(inet_atol(source))
-	    if len(sources) == 0:
-	 	raise "Error parsing source list."
+        if options.igmp_group is None:
+            raise RuntimeError("A group must be specified for a GSR query.")
+        else:
+            for source in options.igmp_sources.split(','):
+                sources.append(inet_atol(source))
+            if len(sources) == 0:
+                raise RuntimeError("Error parsing source list.")
 
     # Set up the vanilla packet
 
@@ -170,17 +170,17 @@ def main():
     count = int(options.count)
     while count > 0:
         packet = input.readpkt()
-	chain = packet.chain()
-	if ((chain.packets[2].type == IGMP_v3_HOST_MEMBERSHIP_REPORT) or
+        chain = packet.chain()
+        if ((chain.packets[2].type == IGMP_v3_HOST_MEMBERSHIP_REPORT) or
             ((chain.packets[2].type == IGMP_v2_HOST_MEMBERSHIP_REPORT) and \
              (options.igmp_v2_listen is True))):
             version = 3
             if chain.packets[2].type == IGMP_v2_HOST_MEMBERSHIP_REPORT:
                 version = 2
-	    #print chain.packets[2].println()
-	    print "%s responded to query with IGMPv%d." % \
-	        ((inet_ntop(AF_INET, struct.pack('!L', chain.packets[1].src))),
-                 version)
-	    count -= 1
+            #print chain.packets[2].println()
+            print("%s responded to query with IGMPv%d." % \
+                ((inet_ntop(AF_INET, struct.pack('!L', chain.packets[1].src))),
+                 version))
+            count -= 1
 
 main()

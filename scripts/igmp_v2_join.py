@@ -33,7 +33,7 @@ def main():
     parser.add_option("-G", "--igmp_group",
                       dest="igmp_group", default=None,
                       help="The IPv4 group for a group-specific query. "
-			   "If omitted, send a general query.")
+               "If omitted, send a general query.")
 
     parser.add_option("-S", "--seconds",
                       dest="seconds", default=1.0,
@@ -49,29 +49,29 @@ def main():
        options.ether_source is None or \
        options.ip_source is None or \
        options.count is None:
-        print "Non-optional argument missing."
+        print("Non-optional argument missing.")
         return
 
     maxresp = 3 * 10
 
     if options.igmp_group is None:
-	# General query.
-    	dst = INADDR_ALLHOSTS_GROUP
+    # General query.
+        dst = INADDR_ALLHOSTS_GROUP
         group = INADDR_ANY
     else:
-	# Group-specific query.
-    	dst = inet_atol(options.igmp_group)
+    # Group-specific query.
+        dst = inet_atol(options.igmp_group)
         group = dst
 
     # Queries don't contain the Router Alert option as they are
     # destined for end stations, not routers.
 
-    c = ethernet(src=ether_atob(options.ether_source),		\
-                 dst=ETHER_MAP_IP_MULTICAST(dst)) /		\
-        ipv4(flags=IP_DF, ttl=1,				\
-             src=inet_atol(options.ip_source),			\
-             dst=dst) /						\
-        igmp(type=IGMP_v2_HOST_MEMBERSHIP_REPORT, code=maxresp) /	\
+    c = ethernet(src=ether_atob(options.ether_source),      \
+                 dst=ETHER_MAP_IP_MULTICAST(dst)) /     \
+        ipv4(flags=IP_DF, ttl=1,                \
+             src=inet_atol(options.ip_source),          \
+             dst=dst) /                     \
+        igmp(type=IGMP_v2_HOST_MEMBERSHIP_REPORT, code=maxresp) /   \
         igmpv2(group=group)
     c.fixup()
 
@@ -81,7 +81,7 @@ def main():
     #
     count = int(options.count)
     if count < 0:
-        count = sys.maxint
+        count = sys.maxsize
     while count > 0:
         out = output.write(c.bytes, len(c.bytes))
         count -= 1

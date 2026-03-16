@@ -99,7 +99,7 @@ class tcpTestCase(unittest.TestCase):
         nop.value = 1
         mss.value.value = 1460		# Most common Internet MSS value.
 
-	# Build a TCP option list which will be 32-bits aligned.
+        # Build a TCP option list which will be 32-bits aligned.
         tcppacket.options.append(nop)
         tcppacket.options.append(nop)
         tcppacket.options.append(mss)
@@ -148,21 +148,21 @@ class tcpTestCase(unittest.TestCase):
         assert (tcp1 != None)
         assert (tcp2 != None)
 
-	#hd = hexdumper()
-	#print hd.dump(tcp1.bytes)
-	#print hd.dump(tcp2.bytes)
+        #hd = hexdumper()
+        #print hd.dump(tcp1.bytes)
+        #print hd.dump(tcp2.bytes)
 
-	# tcp1 should not equal tcp2, they are different instances,
-	# and will therefore have different timestamps -- unless
-	# we end up racing the system clock.
+        # tcp1 should not equal tcp2, they are different instances,
+        # and will therefore have different timestamps -- unless
+        # we end up racing the system clock.
         self.assertNotEqual(tcp1, tcp2,
-			    "instances SHOULD be equal")
+                            "instances SHOULD be equal")
 
         self.assertEqual(tcp1.bytes, tcp2.bytes,
-			 "packet data SHOULD be equal")
+                         "packet data SHOULD be equal")
         tcp1.dport = 0
         self.assertNotEqual(tcp1.bytes, tcp2.bytes,
-			    "packet data SHOULD NOT be equal")
+                            "packet data SHOULD NOT be equal")
         
     def test_tcpv4_str(self):
         """Test the ___str__ method to make sure the correct
@@ -174,30 +174,30 @@ class tcpTestCase(unittest.TestCase):
         tcppacket = tcp(ip.data.bytes)
         assert (tcppacket)
 
-	# pre tcp options:
+        # pre tcp options:
         #expected = "TCP\nsport 53678\ndport 80\nsequence 1351059655\nack_number 0\noffset 11\nreserved 0\nns 0\ncwr 0\nece 0\nurgent 0\nack 0\npush 0\nreset 0\nsyn 1\nfin 0\nwindow 65535\nchecksum 15295\nurg_pointer 0\n"
 
-	# post tcp options:
+        # post tcp options:
         expected = "TCP\nsport 53678\ndport 80\nsequence 1351059655\nack_number 0\noffset 11\nreserved 0\nns 0\ncwr 0\nece 0\nurgent 0\nack 0\npush 0\nreset 0\nsyn 1\nfin 0\nwindow 65535\nchecksum 15295\nurg_pointer 0\n" \
-		   "options [" \
-			"[Field: mss, Value: " \
-				"<pcs.Field  name v, 16 bits, " \
-				"default 1460, discriminator 0>], " \
-			"[Field: nop, Value: 1], " \
-			"[Field: wscale, Value: " \
-				"<pcs.Field  name v, 8 bits, " \
-				"default 0, discriminator 0>], " \
-			"[Field: nop, Value: 1], " \
-			"[Field: nop, Value: 1], " \
-			"[Field: tstamp, Value: " \
-				"<pcs.Field  name v, 64 bits, " \
-				"default 0, discriminator 0>], " \
-			"[Field: sackok, Value: " \
-				"<pcs.Field  name v, 0 bits, " \
-				"default 0, discriminator 0>], " \
-			"[Field: end, Value: 0], " \
-			"[Field: end, Value: 0]" \
-		    "]\n"
+                   "options [" \
+                        "[Field: mss, Value: " \
+                                "<pcs.Field  name v, 16 bits, " \
+                                "default 1460, discriminator 0>], " \
+                        "[Field: nop, Value: 1], " \
+                        "[Field: wscale, Value: " \
+                                "<pcs.Field  name v, 8 bits, " \
+                                "default 0, discriminator 0>], " \
+                        "[Field: nop, Value: 1], " \
+                        "[Field: nop, Value: 1], " \
+                        "[Field: tstamp, Value: " \
+                                "<pcs.Field  name v, 64 bits, " \
+                                "default 0, discriminator 0>], " \
+                        "[Field: sackok, Value: " \
+                                "<pcs.Field  name v, 0 bits, " \
+                                "default 0, discriminator 0>], " \
+                        "[Field: end, Value: 0], " \
+                        "[Field: end, Value: 0]" \
+                    "]\n"
 
         gotttted = tcppacket.__str__()
 
@@ -214,40 +214,40 @@ class tcpTestCase(unittest.TestCase):
         tcppacket = tcp(ip.data.bytes)
         assert (tcppacket)
 
-	# pre tcp options:
+        # pre tcp options:
         #expected = "<TCP: sport: 53678, dport: 80, sequence: 1351059655, ack_number: 0, offset: 11, reserved: 0, urgent: 0, ack: 0, push: 0, reset: 0, syn: 1, fin: 0, window: 65535, checksum: 15295, urg_pointer: 0>"
 
-	# post tcp options:
-	# XXX println() uses __repr__(), not __str__(). the rules for the
-	# game "python" say we have to preserve the structure of
-	# objects returned by __repr__().
+        # post tcp options:
+        # XXX println() uses __repr__(), not __str__(). the rules for the
+        # game "python" say we have to preserve the structure of
+        # objects returned by __repr__().
         expected = "<TCP: sport: 53678, dport: 80, sequence: 1351059655, " \
-		   "ack_number: 0, offset: 11, reserved: 0, " \
+                   "ack_number: 0, offset: 11, reserved: 0, " \
                    "ns: 0, cwr: 0, ece: 0, urgent: 0, " \
-		   "ack: 0, push: 0, reset: 0, syn: 1, fin: 0, " \
-		   "window: 65535, checksum: 15295, urg_pointer: 0, " \
-		   "options: [" \
-			"[Field: mss, Value: " \
-				"<pcs.Field  name v, 16 bits, " \
-				"default 1460, discriminator 0>], " \
-			"[Field: nop, Value: 1], " \
-			"[Field: wscale, Value: " \
-				"<pcs.Field  name v, 8 bits, " \
-				"default 0, discriminator 0>], " \
-			"[Field: nop, Value: 1], " \
-			"[Field: nop, Value: 1], " \
-			"[Field: tstamp, Value: " \
-				"<pcs.Field  name v, 64 bits, " \
-				"default 0, discriminator 0>], " \
-			"[Field: sackok, Value: " \
-				"<pcs.Field  name v, 0 bits, " \
-				"default 0, discriminator 0>], " \
-			"[Field: end, Value: 0], " \
-			"[Field: end, Value: 0]" \
-		    "]>"
+                   "ack: 0, push: 0, reset: 0, syn: 1, fin: 0, " \
+                   "window: 65535, checksum: 15295, urg_pointer: 0, " \
+                   "options: [" \
+                        "[Field: mss, Value: " \
+                                "<pcs.Field  name v, 16 bits, " \
+                                "default 1460, discriminator 0>], " \
+                        "[Field: nop, Value: 1], " \
+                        "[Field: wscale, Value: " \
+                                "<pcs.Field  name v, 8 bits, " \
+                                "default 0, discriminator 0>], " \
+                        "[Field: nop, Value: 1], " \
+                        "[Field: nop, Value: 1], " \
+                        "[Field: tstamp, Value: " \
+                                "<pcs.Field  name v, 64 bits, " \
+                                "default 0, discriminator 0>], " \
+                        "[Field: sackok, Value: " \
+                                "<pcs.Field  name v, 0 bits, " \
+                                "default 0, discriminator 0>], " \
+                        "[Field: end, Value: 0], " \
+                        "[Field: end, Value: 0]" \
+                    "]>"
 
-	# unusual naming to make it easier to spot deltas in an
-	# 80 column display.
+        # unusual naming to make it easier to spot deltas in an
+        # 80 column display.
         gotttted = tcppacket.println()
 
         self.assertEqual(expected, gotttted,

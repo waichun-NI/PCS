@@ -39,7 +39,7 @@ import struct
 import time
 
 import pcs
-import payload
+from . import payload
 #from socket import AF_INET, inet_ntop, inet_ntoa
 
 # TODO: Add __str__ and __repr__ methods to objects which contain
@@ -418,27 +418,27 @@ class ieee80211_michael_event(pcs.Packet):
             self.data = None
 
 ieee80211_map = {
-	RTM_IEEE80211_ASSOC:	ieee80211_join_event,
-	RTM_IEEE80211_REASSOC:	ieee80211_join_event,
-	RTM_IEEE80211_DISASSOC:	ieee80211_leave_event,
-	RTM_IEEE80211_JOIN:	ieee80211_join_event,
-	RTM_IEEE80211_LEAVE:	ieee80211_leave_event,
-	RTM_IEEE80211_SCAN:	payload.payload,	# should be empty
-	RTM_IEEE80211_REPLAY:	ieee80211_replay_event,
-	RTM_IEEE80211_MICHAEL:	ieee80211_michael_event,
-	RTM_IEEE80211_REJOIN:	ieee80211_join_event
+        RTM_IEEE80211_ASSOC:    ieee80211_join_event,
+        RTM_IEEE80211_REASSOC:  ieee80211_join_event,
+        RTM_IEEE80211_DISASSOC: ieee80211_leave_event,
+        RTM_IEEE80211_JOIN:     ieee80211_join_event,
+        RTM_IEEE80211_LEAVE:    ieee80211_leave_event,
+        RTM_IEEE80211_SCAN:     payload.payload,        # should be empty
+        RTM_IEEE80211_REPLAY:   ieee80211_replay_event,
+        RTM_IEEE80211_MICHAEL:  ieee80211_michael_event,
+        RTM_IEEE80211_REJOIN:   ieee80211_join_event
 }
 
 ieee80211_descr = {
-	RTM_IEEE80211_ASSOC:	"Associate",
-	RTM_IEEE80211_REASSOC:	"Reassociate",
-	RTM_IEEE80211_DISASSOC:	"Disassociate",
-	RTM_IEEE80211_JOIN:	"Join",
-	RTM_IEEE80211_LEAVE:	"Leave",
-	RTM_IEEE80211_SCAN:	"Scan Complete",
-	RTM_IEEE80211_REPLAY:	"Replay Detected",
-	RTM_IEEE80211_MICHAEL:	"MICHAEL Failure",
-	RTM_IEEE80211_REJOIN:	"Rejoin"
+        RTM_IEEE80211_ASSOC:    "Associate",
+        RTM_IEEE80211_REASSOC:  "Reassociate",
+        RTM_IEEE80211_DISASSOC: "Disassociate",
+        RTM_IEEE80211_JOIN:     "Join",
+        RTM_IEEE80211_LEAVE:    "Leave",
+        RTM_IEEE80211_SCAN:     "Scan Complete",
+        RTM_IEEE80211_REPLAY:   "Replay Detected",
+        RTM_IEEE80211_MICHAEL:  "MICHAEL Failure",
+        RTM_IEEE80211_REJOIN:   "Rejoin"
 }
 
 class if_ieee80211_msg(pcs.Packet):
@@ -529,47 +529,47 @@ class rt_msg(pcs.Packet):
 
 # What "route -nv monitor" knows about.
 rtmsg_map = {
-	# struct rtmsg_hdr
-	RTM_ADD:			rt_msg,
-	RTM_DELETE:			rt_msg,
-	RTM_CHANGE:			rt_msg,
-	RTM_GET:			rt_msg,
-	RTM_LOSING:			rt_msg,
-	RTM_REDIRECT:			rt_msg,
-	RTM_MISS:			rt_msg,
-	RTM_LOCK:			rt_msg,
-	RTM_RESOLVE:			rt_msg,
-	# struct if_msghdr
-	RTM_IFINFO:			if_link_msg,
-	# struct ifa_msghdr
-	RTM_NEWADDR:			if_addr_msg,
-	RTM_DELADDR:			if_addr_msg,
-	# struct ifma_msghdr
-	RTM_NEWMADDR:			if_maddr_msg,
-	RTM_DELMADDR:			if_maddr_msg,
-	# struct if_announcemsghdr
-	RTM_IFANNOUNCE:			if_state_msg,
-	# struct if_announcemsghdr ('what' overloaded)
-	RTM_IEEE80211:			if_ieee80211_msg
+        # struct rtmsg_hdr
+        RTM_ADD:                        rt_msg,
+        RTM_DELETE:                     rt_msg,
+        RTM_CHANGE:                     rt_msg,
+        RTM_GET:                        rt_msg,
+        RTM_LOSING:                     rt_msg,
+        RTM_REDIRECT:                   rt_msg,
+        RTM_MISS:                       rt_msg,
+        RTM_LOCK:                       rt_msg,
+        RTM_RESOLVE:                    rt_msg,
+        # struct if_msghdr
+        RTM_IFINFO:                     if_link_msg,
+        # struct ifa_msghdr
+        RTM_NEWADDR:                    if_addr_msg,
+        RTM_DELADDR:                    if_addr_msg,
+        # struct ifma_msghdr
+        RTM_NEWMADDR:                   if_maddr_msg,
+        RTM_DELMADDR:                   if_maddr_msg,
+        # struct if_announcemsghdr
+        RTM_IFANNOUNCE:                 if_state_msg,
+        # struct if_announcemsghdr ('what' overloaded)
+        RTM_IEEE80211:                  if_ieee80211_msg
 }
 
 descr = {
-	RTM_ADD:			"Added route",
-	RTM_DELETE:			"Deleted route",
-	RTM_CHANGE:			"Changed metrics or flags",
-	RTM_GET:			"Report metrics",
-	RTM_LOSING:			"Kernel suspects partitioning",
-	RTM_REDIRECT:			"Redirected",
-	RTM_MISS:			"Lookup failed",
-	RTM_LOCK:			"Fix metrics",
-	RTM_RESOLVE:			"Route cloned",
-	RTM_IFINFO:			"Link-state change",
-	RTM_NEWADDR:			"Added protocol address",
-	RTM_DELADDR:			"Removed protocol address",
-	RTM_NEWMADDR:			"Joined group",
-	RTM_DELMADDR:			"Left group",
-	RTM_IFANNOUNCE:			"Interface change",
-	RTM_IEEE80211:			"IEEE 802.11 event"
+        RTM_ADD:                        "Added route",
+        RTM_DELETE:                     "Deleted route",
+        RTM_CHANGE:                     "Changed metrics or flags",
+        RTM_GET:                        "Report metrics",
+        RTM_LOSING:                     "Kernel suspects partitioning",
+        RTM_REDIRECT:                   "Redirected",
+        RTM_MISS:                       "Lookup failed",
+        RTM_LOCK:                       "Fix metrics",
+        RTM_RESOLVE:                    "Route cloned",
+        RTM_IFINFO:                     "Link-state change",
+        RTM_NEWADDR:                    "Added protocol address",
+        RTM_DELADDR:                    "Removed protocol address",
+        RTM_NEWMADDR:                   "Joined group",
+        RTM_DELMADDR:                   "Left group",
+        RTM_IFANNOUNCE:                 "Interface change",
+        RTM_IEEE80211:                  "IEEE 802.11 event"
 }
 
 class rtmsghdr(pcs.Packet):

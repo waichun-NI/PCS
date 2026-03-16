@@ -23,11 +23,8 @@ import calendar
 import time
 
 cdef extern from "Python.h":
-    object PyBuffer_FromMemory(char *s, int len)
     int    PyGILState_Ensure()
     void   PyGILState_Release(int gil)
-    void   Py_BEGIN_ALLOW_THREADS()
-    void   Py_END_ALLOW_THREADS()
 
 cimport bpf
 import bpf
@@ -87,7 +84,7 @@ cdef extern from "pcap_ex.h":
     int     pcap_ex_immediate(pcap_t *p)
     char   *pcap_ex_name(char *name)
     void    pcap_ex_setup(pcap_t *p)
-    int     pcap_ex_next(pcap_t *p, pcap_pkthdr **hdr, char **pkt)
+    int     pcap_ex_next(pcap_t *p, pcap_pkthdr **hdr, char **pkt) nogil
     char   *pcap_ex_lookupdev(char *errbuf)
 
 # XXX Lacks size_t; known Pyrex limitation
@@ -108,7 +105,7 @@ cdef void __pcap_handler(void *arg, pcap_pkthdr *hdr, char *pkt):
     gil = PyGILState_Ensure()
     try:
         (<object>ctx.callback)(hdr.ts.tv_sec + (hdr.ts.tv_usec/1000000.0),
-                               PyBuffer_FromMemory(pkt, hdr.caplen),
+                               pkt[:hdr.caplen],
                                *(<object>ctx.args))
     except:
         ctx.got_exc = 1
@@ -194,13 +191,13 @@ cdef class pcap:
             try:
                 self.__pcap = pcap_open_dead(dumptype, snaplen)
             except:
-                raise OSError, "Internal error pcap_open_dead."
+                raise OSError("Internal error pcap_open_dead.")
             p = dumpfile
         else:
             if not name:
                 p = pcap_ex_lookupdev(self.__ebuf)
                 if p == NULL:
-                    raise OSError, self.__ebuf
+                    raise OSError(self.__ebuf)
             else:
                 p = name
                     
@@ -212,12 +209,12 @@ cdef class pcap:
                                              self.__ebuf)
 
         if not self.__pcap:
-            raise OSError, self.__ebuf
+            raise OSError(self.__ebuf)
                         
         if dumpfile != "":
             self.__dumper = pcap_dump_open(self.__pcap, dumpfile)
             if not self.__dumper:
-                raise OSError, pcap_geterr(self.__pcap)
+                raise OSError(pcap_geterr(self.__pcap))
             
         self.__name = strdup(p)
         self.__filter = strdup("")
@@ -226,7 +223,7 @@ cdef class pcap:
             self.__dloff = dltoff[dlt]
         except KeyError: pass
         if immediate and pcap_ex_immediate(self.__pcap) < 0:
-            raise OSError, "couldn't set BPF immediate mode"
+            raise OSError("couldn't set BPF immediate mode")
             
     property name:
         """Network interface or dumpfile name."""
@@ -263,10 +260,10 @@ cdef class pcap:
         free(self.__filter)
         self.__filter = strdup(value)
         if pcap_compile(self.__pcap, &fcode, self.__filter, optimize, 0) < 0:
-            raise OSError, pcap_geterr(self.__pcap)
+            raise OSError(pcap_geterr(self.__pcap))
         #printf("%p: %d %p\n", <void *>&fcode, fcode.bf_len, <void  *>fcode.bf_insns)
         if pcap_setfilter(self.__pcap, &fcode) < 0:
-            raise OSError, pcap_geterr(self.__pcap)
+            raise OSError(pcap_geterr(self.__pcap))
         pcap_freecode(&fcode)
 
     def setbpfprogram(self, object bpfprogram):
@@ -275,7 +272,7 @@ cdef class pcap:
         cdef bpf_program *bp
         #cdef int i
         if not isinstance(bpfprogram, bpf.program):
-            raise ValueError, ""
+            raise ValueError("")
         # cast to temporary required.
         pbp = bpf.program.__progbuf__(bpfprogram)
         #printf("%p\n", <void *>pbp)
@@ -284,14 +281,14 @@ cdef class pcap:
         #for 0 <= i < bp[0].bf_len:
         #    printf("%d %x\n", i, bp[0].bf_insns[i].code)
         if pcap_setfilter(self.__pcap, bp) < 0:
-            raise OSError, pcap_geterr(self.__pcap)
+            raise OSError(pcap_geterr(self.__pcap))
 
     def compile(self, value, optimize=True, netmask=0):
         """Compile a filter expression to a BPF program for this pcap.
            Return the filter as a bpf program."""
         cdef bpf_program fcode
         if pcap_compile(self.__pcap, &fcode, value, optimize, netmask) < 0:
-            raise OSError, pcap_geterr(self.__pcap)
+            raise OSError(pcap_geterr(self.__pcap))
         pb = bpf.progbuf(<object>&fcode, None)
         program = pb.__program__()
         return program
@@ -299,7 +296,7 @@ cdef class pcap:
     def setdirection(self, value):
         """Set BPF capture direction."""
         if pcap_setdirection(self.__pcap, value) < 0:
-            raise OSError, pcap_geterr(self.__pcap)
+            raise OSError(pcap_geterr(self.__pcap))
 
     def setnonblock(self, nonblock=True):
         """Set non-blocking capture mode."""
@@ -309,7 +306,7 @@ cdef class pcap:
         """Return non-blocking capture mode as boolean."""
         ret = pcap_getnonblock(self.__pcap, self.__ebuf)
         if ret < 0:
-            raise OSError, self.__ebuf
+            raise OSError(self.__ebuf)
         elif ret:
             return True
         return False
@@ -326,7 +323,7 @@ cdef class pcap:
         if not pkt:
             return None
         return (hdr.ts.tv_sec + (hdr.ts.tv_usec / 1000000.0),
-                PyBuffer_FromMemory(pkt, hdr.caplen))
+                pkt[:hdr.caplen])
 
     def __add_pkts(self, ts, pkt, pkts):
         pkts.append((ts, pkt))
@@ -360,7 +357,7 @@ cdef class pcap:
                           <unsigned char *>&ctx)
         if ctx.got_exc:
             exc = sys.exc_info()
-            raise exc[0], exc[1], exc[2]
+            raise exc[1].with_traceback(exc[2])
         return n
 
     def loop(self, callback, *args):
@@ -377,12 +374,11 @@ cdef class pcap:
         cdef int n
         pcap_ex_setup(self.__pcap)
         while 1:
-            Py_BEGIN_ALLOW_THREADS
-            n = pcap_ex_next(self.__pcap, &hdr, &pkt)
-            Py_END_ALLOW_THREADS
+            with nogil:
+                n = pcap_ex_next(self.__pcap, &hdr, &pkt)
             if n == 1:
                 callback(hdr.ts.tv_sec + (hdr.ts.tv_usec / 1000000.0),
-                         PyBuffer_FromMemory(pkt, hdr.caplen), *args)
+                         pkt[:hdr.caplen], *args)
             elif n == -1:
                 raise KeyboardInterrupt
             elif n == -2:
@@ -399,7 +395,7 @@ cdef class pcap:
         cdef int n
         n = pcap_inject(self.__pcap, packet, len)
         if (n < 0):
-            raise OSError, pcap_geterr(self.__pcap)
+            raise OSError(pcap_geterr(self.__pcap))
 
         return n
     
@@ -447,7 +443,7 @@ cdef class pcap:
         dropped, and dropped by the interface."""
         cdef pcap_stat pstat
         if pcap_stats(self.__pcap, &pstat) < 0:
-            raise OSError, pcap_geterr(self.__pcap)
+            raise OSError(pcap_geterr(self.__pcap))
         return (pstat.ps_recv, pstat.ps_drop, pstat.ps_ifdrop)
 
     def __iter__(self):
@@ -459,12 +455,11 @@ cdef class pcap:
         cdef char *pkt
         cdef int n
         while 1:
-            Py_BEGIN_ALLOW_THREADS
-            n = pcap_ex_next(self.__pcap, &hdr, &pkt)
-            Py_END_ALLOW_THREADS
+            with nogil:
+                n = pcap_ex_next(self.__pcap, &hdr, &pkt)
             if n == 1:
                 return (hdr.ts.tv_sec + (hdr.ts.tv_usec / 1000000.0),
-                        PyBuffer_FromMemory(pkt, hdr.caplen))
+                        pkt[:hdr.caplen])
             elif n == -1:
                 raise KeyboardInterrupt
             elif n == -2:
@@ -486,6 +481,6 @@ def lookupdev():
     cdef char *p, ebuf[256]
     p = pcap_ex_lookupdev(ebuf)
     if p == NULL:
-        raise OSError, ebuf
+        raise OSError(ebuf)
     return p
 

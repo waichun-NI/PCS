@@ -37,22 +37,36 @@
 # Description: The setup script for all of the Packet Construction Set
 #
 
-from distutils.core import setup
-from distutils.command import config, clean
-from distutils.extension import Extension
-from Cython.Distutils import build_ext
+from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
+from Cython.Build import cythonize
 import glob, os, sys
 
-class config_pcap(config.config):
+# Minimal config command replacement for distutils.command.config
+class _config_base:
+    """Minimal replacement for distutils.command.config.config"""
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        pass
+
+from setuptools import Command as _Command
+
+class config_pcap(_Command):
     description = 'configure pcap paths'
     user_options = [ ('with-pcap=', None,
                       'path to pcap build or installation directory') ]
     
     def initialize_options(self):
-        config.config.initialize_options(self)
         self.dump_source = 0
         self.noisy = 1
         self.with_pcap = None
+
+    def finalize_options(self):
+        pass
 
     def _write_config_h(self, cfg):
         # XXX - write out config.h for pcap_ex.c
@@ -67,7 +81,7 @@ class config_pcap(config.config):
         if buf.find('pcap_setnonblock(') != -1:
             d['HAVE_PCAP_SETNONBLOCK'] = 1
         f = open('pcs/pcap/config.h', 'w')
-        for k, v in d.iteritems():
+        for k, v in d.items():
             f.write('#define %s %s\n' % (k, v))
         f.close()
     
@@ -81,7 +95,7 @@ class config_pcap(config.config):
                 incdirs = [ os.path.join(d, sd) ]
                 if os.path.exists(os.path.join(d, sd, 'pcap.h')):
                     cfg['include_dirs'] = [ os.path.join(d, sd) ]
-                    for sd in ('lib', ''):
+                    for sd in ('lib', 'lib/x86_64-linux-gnu', 'lib64', ''):
                         for lib in (('pcap', 'libpcap.a'),
                                     ('pcap', 'libpcap.dylib'),
                                     ('pcap', 'libpcap.so'),
@@ -93,10 +107,10 @@ class config_pcap(config.config):
                                     cfg['libraries'].append('iphlpapi')
                                     cfg['extra_compile_args'] = \
                                         [ '-DWIN32', '-DWPCAP' ]
-                                print 'found', cfg
+                                print('found', cfg)
                                 self._write_config_h(cfg)
                                 return cfg
-        raise "couldn't find pcap build or installation directory"
+        raise RuntimeError("couldn't find pcap build or installation directory")
     
     def run(self):
         self._pcap_config([ self.with_pcap ])
@@ -108,27 +122,27 @@ class config_pcap(config.config):
 pcap = Extension(name='pcs.pcap',
                  sources=[ 'pcs/pcap/pcap.pyx', 'pcs/pcap/pcap_ex.c' ],
                  include_dirs=['/usr/include/pcap', './pcs/bpf/', '.'],
-                 library_dirs=['/usr/lib'],
+                 library_dirs=['/usr/lib', '/usr/lib/x86_64-linux-gnu'],
                  libraries=['pcap']
-	)
+        )
 
 bpf = Extension(name='bpf',
                  sources=[ 'pcs/bpf/bpf.pyx' ],
                  include_dirs=['/usr/include/pcap'],
-                 library_dirs=['/usr/lib'],
+                 library_dirs=['/usr/lib', '/usr/lib/x86_64-linux-gnu'],
                  libraries=['pcap']
-	)
+        )
 
 clock = Extension(name='pcs.clock',
                   sources=[ 'pcs/clock/clock.pyx' ],
                   library_dirs=[],
                   libraries=[],
-	)
+        )
 
-pcs_cmds = { 'config': config_pcap, 'build_ext':build_ext }
+pcs_cmds = { 'config': config_pcap, 'build_ext': build_ext }
 
 setup(name='pcs',
-      version='0.9',
+      version='1.0',
       description='Packet Construction Set',
       author='George V. Neville-Neil',
       author_email='gnn@neville-neil.com',

@@ -168,9 +168,9 @@ class marker(pcs.Packet):
             self.data = None
 
 map = {
-	SLOWPROTOCOLS_SUBTYPE_LACP: lacp,
-	SLOWPROTOCOLS_SUBTYPE_MARKER: marker
-	#SLOWPROTOCOLS_SUBTYPE_OAM: oam
+        SLOWPROTOCOLS_SUBTYPE_LACP: lacp,
+        SLOWPROTOCOLS_SUBTYPE_MARKER: marker
+        #SLOWPROTOCOLS_SUBTYPE_OAM: oam
 }
 
 class slowhdr(pcs.Packet):

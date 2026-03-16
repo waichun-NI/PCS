@@ -360,7 +360,7 @@ cdef class progbuf:
         #       ninsns * sizeof(bpf_insn))
         bufp = <bpf_insn*> malloc(ninsns * sizeof(bpf_insn))
         if bufp == NULL:
-            raise MemoryError, 'malloc'
+            raise MemoryError('malloc')
 
         ip = bufp
         for 0 <= i < ninsns:

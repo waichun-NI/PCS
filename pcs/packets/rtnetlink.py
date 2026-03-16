@@ -40,7 +40,7 @@ import struct
 import time
 
 import pcs
-import payload
+from . import payload
 
 # TODO: Add a LengthTypeValue field to model the general TLV format.
 # TODO: Test all this.
@@ -337,12 +337,12 @@ class NexthopField(pcs.CompoundField):
         # If keyword initializers are present, deal with the syntactic sugar.
         # TODO: Figure out how to initialize the TLVs inside our TLV...
         if kv is not None:
-            for kw in kv.iteritems():
+            for kw in kv.items():
                 if kw[0] in self.__dict__:
                     if kw[0] == 'tlvs':
                         if not isinstance(kw[1], list):
                             if __debug__:
-                                print "argument is not a list"
+                                print("argument is not a list")
                             continue
                         #for src in kw[1]:
                         #    if not isinstance(src, int):
@@ -424,12 +424,12 @@ class NexthopField(pcs.CompoundField):
     def bounds(self, value):
         """Check the bounds of this field."""
         # XXX assume maxwidth is inclusive
-	minwidth = self.len.width + self.flags.width + \
+        minwidth = self.len.width + self.flags.width + \
                    self.hops.width + self.ifindex.width
-	maxwidth = (2 ** self.len.width) * 8
-	if self.width < minwidth or self.width > maxwidth:
-            raise FieldBoundsError, "NexthopField must be between %d " \
-                                    "and %d bytes wide" % (minwidth, maxwidth)
+        maxwidth = (2 ** self.len.width) * 8
+        if self.width < minwidth or self.width > maxwidth:
+            raise FieldBoundsError("NexthopField must be between %d " \
+                                    "and %d bytes wide" % (minwidth, maxwidth))
 
     def __eq__(self, other):
         """Test two NexthopFields for equality."""

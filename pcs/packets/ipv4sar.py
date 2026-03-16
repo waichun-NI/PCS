@@ -35,9 +35,9 @@
 # Description: IPv4 Segmentation and Reassembly (SAR) module
 
 import pcs
-import payload
+from . import payload
 
-class ipv4frag(pcs.packets.payload):
+class ipv4frag(payload.payload):
     """A fragment of an IPv4 datagram awaiting reassembly."""
 
 class ipv4sar(object):

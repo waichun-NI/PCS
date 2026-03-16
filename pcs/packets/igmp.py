@@ -20,25 +20,25 @@ IGMP_MTRACE_REPLY = 0x1e
 IGMP_MTRACE_QUERY = 0x1f
 
 igmp_map = {
-	IGMP_HOST_MEMBERSHIP_QUERY:	igmpv2.igmpv2,
-	IGMP_v1_HOST_MEMBERSHIP_REPORT:	igmpv2.igmpv2,
-	#IGMP_DVMRP:			dvmrp.dvmrp,
-	IGMP_v2_HOST_MEMBERSHIP_REPORT:	igmpv2.igmpv2,
-	IGMP_HOST_LEAVE_MESSAGE:	igmpv2.igmpv2,
-	#IGMP_MTRACE_REPLY:		mtrace.reply,
-	#IGMP_MTRACE_QUERY:		mtrace.query,
-	IGMP_v3_HOST_MEMBERSHIP_REPORT:	igmpv3.report
+        IGMP_HOST_MEMBERSHIP_QUERY:     igmpv2.igmpv2,
+        IGMP_v1_HOST_MEMBERSHIP_REPORT: igmpv2.igmpv2,
+        #IGMP_DVMRP:                    dvmrp.dvmrp,
+        IGMP_v2_HOST_MEMBERSHIP_REPORT: igmpv2.igmpv2,
+        IGMP_HOST_LEAVE_MESSAGE:        igmpv2.igmpv2,
+        #IGMP_MTRACE_REPLY:             mtrace.reply,
+        #IGMP_MTRACE_QUERY:             mtrace.query,
+        IGMP_v3_HOST_MEMBERSHIP_REPORT: igmpv3.report
 }
 
 descr = {
-	IGMP_HOST_MEMBERSHIP_QUERY:	"IGMPv2 Query",
-	IGMP_v1_HOST_MEMBERSHIP_REPORT:	"IGMPv1 Report",
-	IGMP_DVMRP:			"DVMRP",
-	IGMP_v2_HOST_MEMBERSHIP_REPORT:	"IGMPv2 Report",
-	IGMP_HOST_LEAVE_MESSAGE:	"IGMPv2 Leave",
-	IGMP_MTRACE_REPLY:		"MTRACE Reply",
-	IGMP_MTRACE_QUERY:		"MTRACE Query",
-	IGMP_v3_HOST_MEMBERSHIP_REPORT:	"IGMPv3 Report"
+        IGMP_HOST_MEMBERSHIP_QUERY:     "IGMPv2 Query",
+        IGMP_v1_HOST_MEMBERSHIP_REPORT: "IGMPv1 Report",
+        IGMP_DVMRP:                     "DVMRP",
+        IGMP_v2_HOST_MEMBERSHIP_REPORT: "IGMPv2 Report",
+        IGMP_HOST_LEAVE_MESSAGE:        "IGMPv2 Leave",
+        IGMP_MTRACE_REPLY:              "MTRACE Reply",
+        IGMP_MTRACE_QUERY:              "MTRACE Query",
+        IGMP_v3_HOST_MEMBERSHIP_REPORT: "IGMPv3 Report"
 }
 
 class igmp(pcs.Packet):
