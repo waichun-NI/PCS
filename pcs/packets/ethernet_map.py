@@ -38,7 +38,7 @@
 # The map is a dictionary who's key is the protocol type and who's
 # value is the class constructor for that type.
 
-import ipv4, ipv6, arp
+from . import ipv4, ipv6, arp
 
 ETHERTYPE_IP		= 0x0800	# IP protocol 
 ETHERTYPE_ARP		= 0x0806	# Addr. resolution protocol

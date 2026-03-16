@@ -148,8 +148,8 @@ class stp(pcs.Packet):
         return s
 
 map = {
-	PROTO_STP: stp,
-	PROTO_GARP: garp
+        PROTO_STP: stp,
+        PROTO_GARP: garp
 }
 
 class bpdu(pcs.Packet):

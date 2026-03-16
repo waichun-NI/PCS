@@ -38,7 +38,8 @@
 # The map is a dictionary who's key is the protocol type and who's
 # value is the class constructor for that type.
 
-import ipv4, ipv6, socket
+from pcs.packets import ipv4, ipv6
+import socket
 
 # Loopback (localhost) interfaces are a bit funky.  The type is in
 # HOST byte order, not network byte order so depending on where a pcap

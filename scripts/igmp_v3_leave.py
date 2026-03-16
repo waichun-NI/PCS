@@ -39,8 +39,8 @@ def main():
        options.ether_source is None or \
        options.ip_source is None or \
        options.igmp_group is None:
-	print "Non-optional argument missing."
-	return
+        print("Non-optional argument missing.")
+        return
 
     # Create an IGMPv3 change-to-include report for the given group
     # with no sources, which means we're leaving the group.

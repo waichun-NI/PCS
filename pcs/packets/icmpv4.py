@@ -128,13 +128,13 @@ class icmpv4echo(pcs.Packet):
 # things being defined in a certain order.
 
 icmp_map = {
-	ICMP_ECHOREPLY:	icmpv4echo,
-	ICMP_ECHO:	icmpv4echo
+        ICMP_ECHOREPLY: icmpv4echo,
+        ICMP_ECHO:      icmpv4echo
 }
 
 descr = {
-	ICMP_ECHOREPLY:	"ICMPv4 Echo Reply",
-	ICMP_ECHO:	"ICMPv4 Echo Request"
+        ICMP_ECHOREPLY: "ICMPv4 Echo Reply",
+        ICMP_ECHO:      "ICMPv4 Echo Request"
 }
 
 class icmpv4(pcs.Packet):
@@ -182,7 +182,7 @@ class icmpv4(pcs.Packet):
     def rdiscriminate(self, packet, discfieldname = None, map = icmp_map):
         """Reverse-map an encapsulated packet back to a discriminator
            field value. Like next() only the first match is used."""
-        print "reverse discriminating %s" % type(packet)
+        print("reverse discriminating %s" % type(packet))
         return pcs.Packet.rdiscriminate(self, packet, "type", map)
 
     def __str__(self):

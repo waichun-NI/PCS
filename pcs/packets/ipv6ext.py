@@ -33,7 +33,7 @@
 # Author: Mike Karels
 #
 # Description: IPv6 routing extension header
-#import pcs
+import pcs
 
 class rt_ext(pcs.Packet):
     """ Routing extension header, type 0 """

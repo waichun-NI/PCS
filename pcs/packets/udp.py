@@ -35,7 +35,7 @@
 # Description: A class which implements UDP v4 packets
 
 import pcs
-import udp_map
+from . import udp_map
 
 import socket
 import time

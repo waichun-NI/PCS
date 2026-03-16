@@ -35,7 +35,7 @@
 # Description: The Ethernet packet class
 
 import pcs
-import ethernet_map
+from . import ethernet_map
 import pcs.packets.ipv4
 from pcs.packets.ipv6 import ipv6
 from pcs.packets.arp import arp
@@ -84,14 +84,14 @@ class ethernet(pcs.Packet):
 
         if len(self.dst) >= 6:
             for byte in range(0,5):
-                retval += "%x:" % ord(self.dst[byte])
-            retval += "%x " % ord(self.dst[5])
+                retval += "%x:" % self.dst[byte]
+            retval += "%x " % self.dst[5]
 
         retval += "src: "
         if len(self.src) >= 6:
             for byte in range(0,5):
-                retval += "%x:" % ord(self.src[byte])
-            retval += "%x " % ord(self.src[5])
+                retval += "%x:" % self.src[byte]
+            retval += "%x " % self.src[5]
 
         retval += "type: 0x%x>" % self.type
 
@@ -104,14 +104,14 @@ class ethernet(pcs.Packet):
         retval += "dst: "
         if len(self.dst) >= 6:
             for byte in range(0,5):
-                retval += "%x:" % ord(self.dst[byte])
-            retval += "%x" % ord(self.dst[5])
+                retval += "%x:" % self.dst[byte]
+            retval += "%x" % self.dst[5]
 
         retval += "\nsrc: "
         if len(self.dst) >= 6:
             for byte in range(0,5):
-                retval += "%x:" % ord(self.src[byte])
-            retval += "%x" % ord(self.src[5])
+                retval += "%x:" % self.src[byte]
+            retval += "%x" % self.src[5]
 
         retval += "\ntype: 0x%x" % self.type
 
@@ -146,10 +146,10 @@ def ether_btoa(bytes):
     """
 
     pretty = ""
-    for i in (range(5)):
-        pretty += hex(ord(bytes[i]))[2:4] # Strip the 0x from the string
+    for i in (list(range(5))):
+        pretty += hex(bytes[i])[2:4] # Strip the 0x from the string
         pretty += ':'
         
-    pretty += hex(ord(bytes[5]))[2:4] # Strip the 0x from the string
+    pretty += hex(bytes[5])[2:4] # Strip the 0x from the string
 
     return pretty

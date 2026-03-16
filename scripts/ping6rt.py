@@ -93,7 +93,7 @@ def main():
                      src=inet_pton(AF_INET6, options.ip_source),  \
                      dst=inet_pton(AF_INET6, options.ip_dest)) / \
         ipv6ext.rt_ext(next_header = 58, \
-		       addr1 = inet_pton(AF_INET6, options.hop)) / \
+                       addr1 = inet_pton(AF_INET6, options.hop)) / \
         icmpv6(type=ICMP6_ECHO_REQUEST, id=12345) / \
         payload(payload="foobar")
 

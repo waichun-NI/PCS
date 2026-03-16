@@ -40,7 +40,7 @@ import time
 
 import pcs
 from pcs.packets import payload
-import ethernet_map
+from . import ethernet_map
 
 #
 # Unnumbered LLC frame control values
@@ -107,7 +107,7 @@ class llc(pcs.Packet):
             if self.ssnap == LLC_8021D_LSAP and \
                self.dsnap == LLC_8021D_LSAP and \
                self.control == LLC_UI:
-                from ieee8021d import bpdu
+                from .ieee8021d import bpdu
                 self.data = bpdu(bytes[curr:remaining], timestamp = timestamp)
             elif self.ssnap == LLC_SNAP_LSAP and \
                self.dsnap == LLC_SNAP_LSAP and \

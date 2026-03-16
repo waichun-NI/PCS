@@ -118,20 +118,20 @@ class icmpTestCase(unittest.TestCase):
                          (test_string, string))
 
     def test_icmpv6_ping(self):
-	import os
-	uname = os.uname()[0]
-	if uname == "FreeBSD":
-	    devname = "edsc0"
-	elif uname == "Linux":
-	    devname = "lo"
+        import os
+        uname = os.uname()[0]
+        if uname == "FreeBSD":
+            devname = "edsc0"
+        elif uname == "Linux":
+            devname = "lo"
         elif uname == "Darwin":
             devname = "en0"
-	else:
-	    print "unknown host os %s" % uname
-	    return
+        else:
+            print("unknown host os %s" % uname)
+            return
 
-	e = ethernet()
-	e.type = 0x0800
+        e = ethernet()
+        e.type = 0x0800
         e.src = "\x00\x00\x00\x00\x00\x00"
         e.dst = "\xff\xff\xff\xff\xff\xff"
         e.type = 0x0800
@@ -150,7 +150,7 @@ class icmpTestCase(unittest.TestCase):
         icmp.code = 0
         icmp.cksum = 0
         
-	ip.len = len(ip.bytes) + len(icmp.bytes)
+        ip.len = len(ip.bytes) + len(icmp.bytes)
 
         packet = Chain([e, ip, icmp])
 
@@ -163,14 +163,14 @@ class icmpTestCase(unittest.TestCase):
         output = PcapConnector(devname)
         assert (ip != None)
 
-	# XXX The use of IP triggers a bpf header format bug if used
-	# with loopback device on FreeBSD, so we use edsc(4) there.
+        # XXX The use of IP triggers a bpf header format bug if used
+        # with loopback device on FreeBSD, so we use edsc(4) there.
 
         n_out = output.write(packet.bytes, 42)
         assert (n_out == 42)
 
-	packet_in = input.read()
-	assert (n_out == len(packet_in))
+        packet_in = input.read()
+        assert (n_out == len(packet_in))
 
 if __name__ == '__main__':
     unittest.main()

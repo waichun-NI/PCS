@@ -120,7 +120,7 @@ cdef void _double_to_timespec(double f, timespec *tp):
     tp[0].tv_nsec = <unsigned int>((f - (<double>tp[0].tv_nsec)) *
                                     1000000000 + 0.5e-9)
     if tp[0].tv_nsec >= 1000000000:
-        tp[0].tv_sec = tp[0].tv_sec + (tp[0].tv_nsec / 1000000000)
+        tp[0].tv_sec = tp[0].tv_sec + (tp[0].tv_nsec // 1000000000)
         tp[0].tv_nsec = tp[0].tv_nsec % 1000000000
 
 cdef double _timespec_to_double(timespec *tp):

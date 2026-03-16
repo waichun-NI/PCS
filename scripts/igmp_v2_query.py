@@ -32,12 +32,12 @@ def main():
     parser.add_option("-G", "--igmp_group",
                       dest="igmp_group", default=None,
                       help="The IPv4 group for a group-specific query. "
-			   "If omitted, send a general query.")
+               "If omitted, send a general query.")
 
     parser.add_option("-M", "--maxresp",
                       dest="igmp_maxresp", default=None,
                       help="The maximum time for end-stations to respond "
-			   "(in seconds).")
+               "(in seconds).")
 
     parser.add_option("-c", "--count",
                       dest="count", default=None,
@@ -49,7 +49,7 @@ def main():
        options.ether_source is None or \
        options.ip_source is None or \
        options.count is None:
-        print "Non-optional argument missing."
+        print("Non-optional argument missing.")
         return
 
     maxresp = 3 * 10
@@ -57,23 +57,23 @@ def main():
         maxresp = int(options.igmp_maxresp) * 10    # in units of deciseconds
 
     if options.igmp_group is None:
-	# General query.
-    	dst = INADDR_ALLHOSTS_GROUP
+    # General query.
+        dst = INADDR_ALLHOSTS_GROUP
         group = INADDR_ANY
     else:
-	# Group-specific query.
-    	dst = inet_atol(options.igmp_group)
+    # Group-specific query.
+        dst = inet_atol(options.igmp_group)
         group = dst
 
     # Queries don't contain the Router Alert option as they are
     # destined for end stations, not routers.
 
-    c = ethernet(src=ether_atob(options.ether_source),		\
-                 dst=ETHER_MAP_IP_MULTICAST(dst)) /		\
-        ipv4(flags=IP_DF, ttl=1,				\
-             src=inet_atol(options.ip_source),			\
-             dst=dst) /						\
-        igmp(type=IGMP_HOST_MEMBERSHIP_QUERY, code=maxresp) /	\
+    c = ethernet(src=ether_atob(options.ether_source),      \
+                 dst=ETHER_MAP_IP_MULTICAST(dst)) /     \
+        ipv4(flags=IP_DF, ttl=1,                \
+             src=inet_atol(options.ip_source),          \
+             dst=dst) /                     \
+        igmp(type=IGMP_HOST_MEMBERSHIP_QUERY, code=maxresp) /   \
         igmpv2(group=group)
     c.fixup()
 
@@ -90,11 +90,11 @@ def main():
     while count > 0:
         packet = input.readpkt()
         chain = packet.chain()
-	if chain.packets[2].type == IGMP_v2_HOST_MEMBERSHIP_REPORT:
-	    #print chain.packets[2].println()
-	    print "%s is in %s" % \
-	        (inet_ntop(AF_INET, struct.pack('!L', chain.packets[1].src)), \
-	         inet_ntop(AF_INET, struct.pack('!L', chain.packets[3].group)))
-	    count -= 1
+    if chain.packets[2].type == IGMP_v2_HOST_MEMBERSHIP_REPORT:
+        #print chain.packets[2].println()
+        print("%s is in %s" % \
+            (inet_ntop(AF_INET, struct.pack('!L', chain.packets[1].src)), \
+             inet_ntop(AF_INET, struct.pack('!L', chain.packets[3].group))))
+        count -= 1
 
 main()

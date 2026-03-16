@@ -37,7 +37,7 @@
 import pcs
 from pcs import UnpackError
 from socket import AF_INET, inet_ntop
-import ipv4_map
+from . import ipv4_map
 
 import struct
 import time
@@ -142,9 +142,8 @@ class ipv4(pcs.Packet):
             options_len = hlen_bytes - self.sizeof()
 
             if hlen_bytes > len(bytes):
-                raise UnpackError, \
-                      "IP header is larger than input (%d > %d)" % \
-                      (hlen_bytes, len(bytes))
+                raise UnpackError("IP header is larger than input (%d > %d)" % \
+                      (hlen_bytes, len(bytes)))
 
             if options_len > 0:
                 curr = self.sizeof()
@@ -167,9 +166,8 @@ class ipv4(pcs.Packet):
                         # that a router must examine the packet. It is
                         # 32 bits wide including option code and length.
                         if optlen != 4:
-                            raise UnpackError, \
-                                  "Bad length %d for IP option %d, " \
-                                  "should be %d" % (optlen, option, 4)
+                            raise UnpackError("Bad length %d for IP option %d, " \
+                                  "should be %d" % (optlen, option, 4))
                         value = struct.unpack("!H", bytes[curr+2:curr+4])[0]
                         options.append(pcs.TypeLengthValueField("ra",
                                        pcs.Field("t", 8, default = option),
@@ -177,7 +175,7 @@ class ipv4(pcs.Packet):
                                        pcs.Field("v", 16, default = value)))
                         curr += optlen
                     else:
-                        print "warning: unknown IP option %d" % option
+                        print("warning: unknown IP option %d" % option)
                         optdatalen = optlen - 2
                         options.append(pcs.TypeLengthValueField("unknown",
                                        pcs.Field("t", 8, default = option),

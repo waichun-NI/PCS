@@ -39,7 +39,7 @@ import struct
 import time
 
 import pcs
-import payload
+from . import payload
 
 # TODO: Test all this.
 
@@ -113,13 +113,13 @@ class nlmsg_error(pcs.Packet):
 # to avoid circular dependencies, and to make it easier to
 # introduce parsers for dealing with subsystems e.g. rtnetlink.
 nlmsg_map = {
-	NLMSG_NOOP:	payload.payload,
-	NLMSG_ERROR:	nlmsg_error
+        NLMSG_NOOP:     payload.payload,
+        NLMSG_ERROR:    nlmsg_error
 }
 
 descr = {
-	NLMSG_NOOP:	"Noop",
-	NLMSG_ERROR:	"Error"
+        NLMSG_NOOP:     "Noop",
+        NLMSG_ERROR:    "Error"
 }
 
 # XXX Can't fully discriminate without knowing which subsystem
